@@ -1,0 +1,4 @@
+subject,predicate,object
+Alice,age,31
+Carol,worksAt,BioLab
+Dave,knows,Alice

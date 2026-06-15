@@ -1,0 +1,5 @@
+subject,predicate,object
+Alice,knows,Bob
+Alice,knows,Carol
+Bob,worksAt,TechCorp
+TechCorp,locatedIn,CityA
