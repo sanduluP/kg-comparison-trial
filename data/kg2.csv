@@ -1,0 +1,8 @@
+subject,predicate,object
+Alice,knows,Bob
+Alice,knows,Carol
+Bob,worksAt,TechCorp
+Carol,worksAt,BioLab
+TechCorp,locatedIn,CityA
+Alice,age,31
+Dave,knows,Alice
