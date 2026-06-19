@@ -11,6 +11,7 @@
   "conflicts": 2,
   "normalize_whitespace": false,
   "casefold": false,
+  "strict": true,
   "kg1": "kg_pipeline_a",
   "kg2": "kg_pipeline_b"
 }

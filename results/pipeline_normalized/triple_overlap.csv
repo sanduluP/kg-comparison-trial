@@ -1,5 +1,4 @@
 subject,predicate,object
-alice,knows,bob
-alice,worksat,techcorp
-dataplatform,ownedby,analyticsteam
-techcorp,locatedin,berlin
+Alice,knows,bob
+DataPlatform,ownedBy,analyticsteam
+TechCorp,locatedIn,berlin
