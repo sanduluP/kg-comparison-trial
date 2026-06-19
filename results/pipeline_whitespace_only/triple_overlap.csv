@@ -1,0 +1,4 @@
+subject,predicate,object
+Alice,knows,Bob
+DataPlatform,ownedBy,AnalyticsTeam
+TechCorp,locatedIn,Berlin
