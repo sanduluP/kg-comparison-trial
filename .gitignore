@@ -1,1 +1,4 @@
 .claude/
+.qwen/
+__pycache__/
+*.py[cod]
