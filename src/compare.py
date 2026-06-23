@@ -5,15 +5,45 @@ Input CSVs must have columns: subject, predicate, object
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import pandas as pd
 
 
-def load_kg(path: str) -> pd.DataFrame:
+def _normalize_value(value: str, normalize_whitespace: bool, casefold: bool) -> str:
+    if normalize_whitespace:
+        value = re.sub(r"\s+", " ", value).strip()
+    if casefold:
+        value = value.casefold()
+    return value
+
+
+def load_kg(
+    path: str,
+    normalize_whitespace: bool = True,
+    casefold_object: bool = False,
+) -> pd.DataFrame:
     df = pd.read_csv(path, dtype=str).dropna()
     df.columns = df.columns.str.strip()
     df = df[["subject", "predicate", "object"]].drop_duplicates()
+    if not normalize_whitespace and not casefold_object:
+        return df
+
+    for column in ["subject", "predicate"]:
+        df[column] = df[column].map(
+            lambda value: _normalize_value(
+                value, normalize_whitespace=normalize_whitespace, casefold=False
+            )
+        )
+    df["object"] = df["object"].map(
+        lambda value: _normalize_value(
+            value,
+            normalize_whitespace=normalize_whitespace,
+            casefold=casefold_object,
+        )
+    )
+    df = df.drop_duplicates()
     return df
 
 
@@ -79,12 +109,33 @@ def main():
     parser.add_argument("kg1", help="Path to first KG CSV (subject,predicate,object)")
     parser.add_argument("kg2", help="Path to second KG CSV (subject,predicate,object)")
     parser.add_argument("--out", default="results", help="Output directory (default: results/)")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Disable normalization and compare exact raw values.",
+    )
+    parser.add_argument(
+        "--casefold",
+        action="store_true",
+        help="Case-normalize object values before comparison.",
+    )
     args = parser.parse_args()
 
-    kg1 = load_kg(args.kg1)
-    kg2 = load_kg(args.kg2)
+    kg1 = load_kg(
+        args.kg1,
+        normalize_whitespace=not args.strict,
+        casefold_object=args.casefold,
+    )
+    kg2 = load_kg(
+        args.kg2,
+        normalize_whitespace=not args.strict,
+        casefold_object=args.casefold,
+    )
 
     results = compare(kg1, kg2)
+    results["summary"]["normalize_whitespace"] = not args.strict
+    results["summary"]["casefold"] = args.casefold
+    results["summary"]["strict"] = args.strict
     save_results(results, Path(args.out), Path(args.kg1).stem, Path(args.kg2).stem)
 
 

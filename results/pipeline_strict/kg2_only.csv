@@ -1,0 +1,4 @@
+subject,predicate,object
+ alice , worksAt , techcorp
+Bob,manages,Data Platform
+TechCorp,locatedIn, Berlin

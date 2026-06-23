@@ -1,0 +1,17 @@
+{
+  "entity_overlap": 8,
+  "entity_kg1_only": 1,
+  "entity_kg2_only": 2,
+  "relation_overlap": 5,
+  "relation_kg1_only": 0,
+  "relation_kg2_only": 0,
+  "triple_overlap": 3,
+  "triple_kg1_only": 2,
+  "triple_kg2_only": 2,
+  "conflicts": 1,
+  "normalize_whitespace": true,
+  "casefold": true,
+  "strict": false,
+  "kg1": "kg_pipeline_a",
+  "kg2": "kg_pipeline_b"
+}
