@@ -104,6 +104,14 @@ def save_results(results: dict, out_dir: Path, kg1_name: str, kg2_name: str) -> 
     print(json.dumps(summary, indent=2))
 
 
+def comparison_mode(strict: bool, casefold: bool) -> str:
+    if strict:
+        return "strict"
+    if casefold:
+        return "casefold"
+    return "whitespace_normalized"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Compare two knowledge graphs in CSV format.")
     parser.add_argument("kg1", help="Path to first KG CSV (subject,predicate,object)")
@@ -136,6 +144,10 @@ def main():
     results["summary"]["normalize_whitespace"] = not args.strict
     results["summary"]["casefold"] = args.casefold
     results["summary"]["strict"] = args.strict
+    results["summary"]["comparison_mode"] = comparison_mode(
+        strict=args.strict,
+        casefold=args.casefold,
+    )
     save_results(results, Path(args.out), Path(args.kg1).stem, Path(args.kg2).stem)
 
 

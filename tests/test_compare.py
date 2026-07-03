@@ -1,9 +1,11 @@
 import csv
+import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
-from src.compare import compare, load_kg
+from src.compare import compare, comparison_mode, load_kg
 
 
 def write_rows(path: Path, rows: list[tuple[str, str, str]]) -> None:
@@ -62,6 +64,41 @@ class CompareNormalizationTest(unittest.TestCase):
             self.assertEqual(casefolded_kg2.iloc[0]["object"], "engineer")
             self.assertEqual(casefolded_kg1.iloc[0]["subject"], "Person:Alice")
             self.assertEqual(casefolded_kg2.iloc[0]["subject"], "person:alice")
+
+    def test_comparison_mode_labels_are_stable(self) -> None:
+        self.assertEqual(comparison_mode(strict=True, casefold=False), "strict")
+        self.assertEqual(comparison_mode(strict=False, casefold=True), "casefold")
+        self.assertEqual(
+            comparison_mode(strict=False, casefold=False),
+            "whitespace_normalized",
+        )
+
+    def test_summary_json_includes_machine_readable_comparison_mode(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir)
+            kg1_path = tmp_path / "kg1.csv"
+            kg2_path = tmp_path / "kg2.csv"
+            out_dir = tmp_path / "results"
+
+            write_rows(kg1_path, [("Alice", "worksAt", "TechCorp")])
+            write_rows(kg2_path, [("Alice", "worksAt", "techcorp")])
+
+            subprocess.run(
+                [
+                    "python3",
+                    "src/compare.py",
+                    str(kg1_path),
+                    str(kg2_path),
+                    "--casefold",
+                    "--out",
+                    str(out_dir),
+                ],
+                check=True,
+                cwd=Path(__file__).resolve().parent.parent,
+            )
+
+            summary = json.loads((out_dir / "summary.json").read_text())
+            self.assertEqual(summary["comparison_mode"], "casefold")
 
 
 if __name__ == "__main__":
