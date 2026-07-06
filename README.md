@@ -45,6 +45,9 @@ python src/compare.py data/kg_pipeline_a.csv data/kg_pipeline_b.csv \
   --out tmp/results_casefold
 ```
 
+`summary.json` also records a machine-readable `comparison_mode` with one of:
+`whitespace_normalized`, `strict`, or `casefold`.
+
 ## Output files
 
 - `summary.json`: overlap and conflict counts
